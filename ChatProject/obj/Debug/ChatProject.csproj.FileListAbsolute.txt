@@ -1,0 +1,6 @@
+c:\users\shrimp\documents\visual studio 2015\Projects\ChatProject\ChatProject\bin\Debug\ChatProject.exe.config
+c:\users\shrimp\documents\visual studio 2015\Projects\ChatProject\ChatProject\bin\Debug\ChatProject.exe
+c:\users\shrimp\documents\visual studio 2015\Projects\ChatProject\ChatProject\bin\Debug\ChatProject.pdb
+c:\users\shrimp\documents\visual studio 2015\Projects\ChatProject\ChatProject\obj\Debug\ChatProject.csprojResolveAssemblyReference.cache
+c:\users\shrimp\documents\visual studio 2015\Projects\ChatProject\ChatProject\obj\Debug\ChatProject.exe
+c:\users\shrimp\documents\visual studio 2015\Projects\ChatProject\ChatProject\obj\Debug\ChatProject.pdb
