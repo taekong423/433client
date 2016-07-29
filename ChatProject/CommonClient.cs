@@ -28,7 +28,10 @@ namespace ChatProject
             this.socket = soc;
             this.clientName = name;
 
-            //CHECK: send to FE   my account
+            //CHECK: send to FE   my account?
+
+            //CHECK: Receive the Commands FROM server?
+            // or make in this area?
         }       
 
         void CreatRoom()
@@ -36,8 +39,21 @@ namespace ChatProject
 
         }
 
+        void List()
+        {
 
+        }   
+        
+        void Leave()
+        {
 
+        }   
+        
+        void Join()
+        {
+
+        }  
+        
         void SendMsg()
         {
 
