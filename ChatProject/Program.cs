@@ -46,7 +46,7 @@ namespace ChatProject
 
             Console.WriteLine("Start ");                      
             while (true) {
-                Console.WriteLine("Welcome !");
+                Console.WriteLine("\n\n--------Welcome !--------");
                 Console.WriteLine("Please Enter Command\nRun Client : 1 or client\nRun Dummy Client : 2 or dummy\nRun Server : 3 or server\n0 is Quit");
                 command = Console.ReadLine();
                 switch (command)

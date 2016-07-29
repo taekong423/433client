@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using static System.BitConverter;
 
-namespace Ircc
+namespace IrccServerTemp
 {
     public struct Header
     {

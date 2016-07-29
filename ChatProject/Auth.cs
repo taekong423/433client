@@ -5,6 +5,8 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Net.Sockets;
 using System.Net;
+using Ircc;
+using static Ircc.IrccHelper;
 
 namespace ChatProject
 {
@@ -13,8 +15,11 @@ namespace ChatProject
         public Socket socket = null;
         string clientName;
         string password;
-       
-        int portNum = 4334;  
+
+        //IPAddress address = IPAddress.Parse("10.100.58.5");
+        IPAddress address = IPAddress.Parse("127.0.0.1");
+        int portNum = 30000;
+
 
         public Auth()
         {
@@ -22,44 +27,105 @@ namespace ChatProject
             Console.WriteLine("\nConnecting...");
 
             TryConnect();
-            if(socket.IsBound)
+            while(socket.IsBound)
             {
                 Console.WriteLine("\nDo You Have An ID ?\n If you Have, press Y Key OR ANY.\n If not, press N Key \n (y / n) : ");
 
                 ConsoleKeyInfo keyInfo;
                 keyInfo = Console.ReadKey();
+
+                //Sign up Process
                 if (keyInfo.KeyChar == 'n' || keyInfo.KeyChar == 'N')
                 {
-                    Console.WriteLine("\nYou will enter the Sign Up Process.\n Please Wait for seconds");
+                    Console.WriteLine("\nYou will enter the Sign Up Process.\n Please Wait for seconds");                    
+                    try
+                    {
+                        short resultCode = SignUp();
+                        //Receivec Packet Code Check
+                        if (Code.SIGNUP_ERR == resultCode)//Fail
+                        {
+                            Console.WriteLine("\nSign up is FAILED");
 
-                    if (0 == SignUp())//Fail
-                    {
-                        Console.WriteLine("\nFAIL");
+                            //what is the error?
+                            Console.WriteLine("\nReturn to the First Command window");
+                        }
+                        else if (Code.SIGNUP_RES == resultCode)//Success
+                        {
+                            Console.WriteLine("\nSignUp Success");
+                            CommonClient client = new CommonClient(socket, clientName);
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nWrong Type Message is received (Unexpected Message)");
+                        }
                     }
-                    else//Success
+                    catch(SocketException se)
                     {
-                        Console.WriteLine("\nSignUp");
-                        CommonClient client = new CommonClient(socket, clientName, password);
+                        Console.WriteLine("\nSocketException : {0}", se.Message);
+
+                        //CHECK: close socket
+                        socket.Close();
+                        Console.WriteLine("\nReturn to the First Page");                        
+                        break;
                     }
+                    catch(ArgumentException ae)
+                    {
+                        Console.WriteLine("\nArgumentException : {0} \nName(4~12 character)\npassword(6~18)", ae.Message);                                                
+                    }
+                    catch(Exception e)
+                    {
+                        //CHECK: Exception Handling
+                        Console.WriteLine("\nException : {0}",e.Message);
+                        break;
+                    }                    
                 }
-                else
-                {
-                    //CHECK: integer                    
-                    if (0 == Login())//Fail
+                else//Login Process
+                {                    
+                    try
                     {
-                        Console.WriteLine("\nFAIL");
+                        short resultCode = Login();
+
+                        //Receivec Packet Code Check
+                        if (Code.LOGIN_ERR == resultCode)//Fail
+                        {
+                            Console.WriteLine("\nLogin is FAILED");
+
+                            //what is the error?
+                            Console.WriteLine("\nReturn to the First Command window");
+                        }
+                        else if (Code.LOGIN_RES == resultCode)//Success
+                        {
+                            Console.WriteLine("\nLogin Success");
+                            CommonClient client = new CommonClient(socket, clientName);
+                            break;
+                        }
+                        else
+                        {
+                            Console.WriteLine("\nWrong Type Message is received (Unexpected Message)");
+                        }
                     }
-                    else//Success
+                    catch (SocketException se)
                     {
-                        Console.WriteLine("\nLogin");
+                        Console.WriteLine("\nSocketException : {0}", se.Message);
+
+                        //CHECK: close socket
+                        socket.Close();
+                        Console.WriteLine("\nReturn to the First Page");
+                        break;
                     }
+                    catch (ArgumentException ae)
+                    {
+                        Console.WriteLine("\nArgumentException : {0} \nName(4~12 character)\npassword(6~18)", ae.Message);
+                    }
+                    catch (Exception e)
+                    {
+                        //CHECK: Exception Handling
+                        Console.WriteLine("\nException : {0}", e.Message);
+                        break;
+                    }                   
                 }
-            }
-            else
-            {
-                //exit
-                Console.WriteLine("\nReturn to the First Command window");
-            }          
+            }      
         }
 
         void TryConnect()
@@ -107,10 +173,7 @@ namespace ChatProject
         {
             try
             {
-                //socket.Connect(new IPEndPoint(IPAddress.Loopback, portNum));
-                IPAddress address = IPAddress.Parse("10.100.58.5");
-                portNum = 30000;
-
+                //socket.Connect(new IPEndPoint(IPAddress.Loopback, portNum));                
                 socket.Connect(new IPEndPoint(address, portNum));
                 Console.WriteLine("Connected");
             }
@@ -133,52 +196,62 @@ namespace ChatProject
             return socket.IsBound;
         }
 
-        int Login()
+        short Login()
         {
-            int result = 0;
-
-            //CHECK: valid format
+            Console.WriteLine("\n\n----------Login Process----------");
+            
             Console.WriteLine("Name (ID) : ");
             clientName = Console.ReadLine();            
            
             Console.WriteLine("Password : ");
             password = Console.ReadLine();
-            
+
+            if (4 > clientName.Length || 6 > password.Length)
+            {
+                throw new ArgumentException();
+            }
             
             //Packet Parsing
-            //send ID and Password
-            Console.WriteLine("\nSend strat");        
-            SendLoginMsg(LoginStrToByte(clientName,password));
-            Console.WriteLine("\nSend ended");
+            //send ID and Password            
+            socket.Send(CreateBytesPacket(Comm.CS,Code.LOGIN, LoginStrToByte(clientName, password)));            
 
             //Receive Validation
             //Packet Parsing
             //check result
-
-            result = 100; // success
-            return result;
+            Packet resPacket;
+            Console.WriteLine("\nWait for Response Message");
+            resPacket = RecvMsg();                       
+                        
+            return resPacket.header.code;
         }
 
-        int SignUp()
+        short SignUp()
         {
-            int result = 0;
-
-            Console.WriteLine("\n----------Sign Up Process----------");
-
+            Console.WriteLine("\n\n----------Sign Up Process----------");
+            
             Console.WriteLine("Name (ID) : ");
+            clientName = Console.ReadLine();
 
             Console.WriteLine("Password : ");
+            password = Console.ReadLine();
 
-            //CHECK:
+            if (4 > clientName.Length || 6 > password.Length)
+            {
+                throw new ArgumentException();
+            }
+            
             //Packet Parsing
-            //send ID and Password
+            //send ID and Password           
+            socket.Send(CreateBytesPacket(Comm.CS, Code.SIGNUP, LoginStrToByte(clientName, password)));            
 
-
+            //Receive Validation
             //Packet Parsing
             //check result
+            Packet resPacket;
+            Console.WriteLine("\nWait for Response Message");
+            resPacket = RecvMsg();
 
-            result = 100; //success
-            return result;
+            return resPacket.header.code;
         }
 
         //convert string to byte for login
@@ -188,37 +261,36 @@ namespace ChatProject
             byte[] bClientName = new byte[12];
             byte[] bPassword = new byte[18];
 
+            //parameter : string, startIndex, lastIndex, stored byte[], byte[] start index
             Encoding.UTF8.GetBytes(name, 0, name.Length, bClientName, 0);
             Encoding.UTF8.GetBytes(pass, 0, pass.Length, bPassword, 0);
 
-            byte[] bmsg = bClientName.Concat(bPassword).ToArray();
+            byte[] bMsg = bClientName.Concat(bPassword).ToArray();
 
-            return bmsg;
+            return bMsg;
         }
 
-       
-
-        void SendLoginMsg(byte[] bMsg)
+        Packet RecvMsg()
         {
-            //CHECK: have to functionalize
-            Header header;
-            header.comm = 0;
-            header.code = 302;
-            header.size = bMsg.Length;
-            header.reserved = 0;
+            //CHECK: set Timer or not
 
-            Packet packet;
-            packet.header = header;
-            packet.data = bMsg;            
+            //CHECK: variable name
+            Header recvdHeader;
+            Packet recvdPacket;
+            int bytecount;
 
-            //send start
-            socket.Send(IrccHelper.packetToBytes(packet));
+            //get HEADER
+            byte[] header = new byte[HEADER_SIZE];
+            bytecount = socket.Receive(header);
+            recvdHeader = bytesToHeader(header);
+            recvdPacket.header = recvdHeader;
 
-        }
+            // get DATA
+            byte[] data = new byte[recvdHeader.size];
+            bytecount = socket.Receive(data);
+            recvdPacket.data = data;
 
-        void RecvMsg()
-        {
-            //CHECK:
+            return recvdPacket;
         }
     }
 }

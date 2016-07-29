@@ -15,6 +15,7 @@ namespace ChatProject
 
         //CHECK: Encrypt
         //is password needed ?
+        //how about token?
         string password;
 
         CommonClient()
@@ -22,14 +23,20 @@ namespace ChatProject
 
         }
 
-        public CommonClient(Socket soc, string name, string password)        
+        public CommonClient(Socket soc, string name)        
         {
             this.socket = soc;
             this.clientName = name;
-            this.password = password;
 
             //CHECK: send to FE   my account
         }       
+
+        void CreatRoom()
+        {
+
+        }
+
+
 
         void SendMsg()
         {
