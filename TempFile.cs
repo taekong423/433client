@@ -45,4 +45,31 @@
 
             //send start
             socket.Send(IrccHelper.packetToBytes(packet));
+
+
+
+
         }
+
+	void SendMsg(short comm, short code)
+        {
+            //CHECK: have to functionalize
+            Header header;
+            header.comm = comm;
+            header.code = code;
+            header.size = 0;
+            header.reserved = 0;
+
+            Packet packet;
+            packet.header = header;
+            packet.data = null;
+
+            //send start
+            socket.Send(IrccHelper.packetToBytes(packet));
+        
+
+	
+}
+
+
+
