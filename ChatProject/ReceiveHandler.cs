@@ -22,115 +22,114 @@ namespace Ircc
                 {
                     //------------CREATE------------
                     case Code.CREATE:
-                        //FE side
+                        //CL -> FE side
                         break;
                     case Code.CREATE_DUPLICATE_ERR:
-                        //CL side
+                        //FE -> CL side
                         break;
                     case Code.CREATE_FULL_ERR:
-                        //CL side
+                        //FE -> CL side
                         break;
 
 
                     //------------DESTROY------------
                     case Code.DESTROY:
-                        //FE side
+                        //CL -> FE side
                         break;
                     case Code.DESTROY_ERR:
-                        //CL side
+                        //FE -> CL side
                         break;                        
 
 
                     //------------FAIL------------
                     case Code.FAIL:
-                        //FE side
+                        //
                         break;
 
 
                     //------------HEARTBEAT------------
                     case Code.HEARTBEAT:
-                        //CL side
+                        //FE -> CL side
                         break;
                     case Code.HEARTBEAT_RES:
-                        //FE side
+                        //CL -> FE side
                         break;
 
 
                     //------------JOIN------------
                     case Code.JOIN:
-                        //FE side
+                        //CL -> FE side
                         break;
                     case Code.JOIN_FULL_ERR:
-                        //CL side
+                        //FE -> CL side
                         break;
                     case Code.JOIN_NULL_ERR:
-                        //CL side
+                        //FE -> CL side
                         break;                        
 
 
                     //------------LEAVE------------
                     case Code.LEAVE:
-                        //FE side
+                        //CL -> FE side
                         break;
                     case Code.LEAVE_ERR:
-                        //CL side
+                        //FE -> CL side
                         break;
 
 
                     //------------LIST------------
                     case Code.LIST:
-                        //FE side
+                        //CL -> FE side
                         break;
                     case Code.LIST_ERR:
-                        //CL side
+                        //FE -> CL side
                         break;
                     case Code.LIST_RES:
-                        //CL side
+                        //FE -> CL side
                         break;                    
 
 
                     //------------MSG------------
                     case Code.MSG:
-                        //CL and FE side
+                        //CL <--> FE side
                         break;
                     case Code.MSG_ERR:
-                        //CL and FE side
+                        //CL <--> FE side
                         break;
 
 
                     //------------SIGNIN------------
                     case Code.SIGNIN:
-                        //FE and BE side
+                        //CL -> FE -> BE side
                         break;
                     case Code.SIGNIN_ERR:
-                        //CL side
+                        //BE -> FE -> CL side
                         break;
                     case Code.SIGNIN_RES:
-                        //CL side
+                        //BE -> FE -> CL side
                         break;
 
 
                     //------------SIGNUP------------
                     case Code.SIGNUP:
-                        //FE and BE side
+                        //CL -> FE -> BE side
                         //Do SignUp Process                        
                         break;
                     case Code.SIGNUP_ERR:
-                        //CL side
+                        //BE -> FE -> CL side
                         //error handling
                         break;
                     case Code.SIGNUP_RES:
-                        //CL side
+                        //BE -> FE -> CL side
                         //success
                         break;
 
 
                     //------------SUCCESS------------
                     case Code.SUCCESS:
-                        //FE side
+                        //
                         break;                    
                 }
-
             }
             //Server to Server Side
             else if(Comm.SS == recvPacket.header.comm)
