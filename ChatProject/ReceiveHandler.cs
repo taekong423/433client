@@ -185,7 +185,7 @@ namespace Ircc
 
             Packet returnPacket = new Packet(returnHeader,returnData);
 
-            return new Packet();
+            return returnPacket;
         }
     }
 }
